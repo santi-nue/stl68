@@ -1,8 +1,8 @@
-@page "/counter"
+@page "/counter" 
+@rendermode @(new InteractiveAutoRenderMode(prerender: false))
+@using BlazorTimer.Client
 @inject HttpClient Http
 
-using System.Threading;
-using System.Threading.Tasks;
 
 <h3>API Data</h3>
 <div>
