@@ -1,8 +1,6 @@
 @page "/counter"
 @inject HttpClient Http
 
-@using System.Threading
-
 <h3>API Data</h3>
 <div>
     @if (_data == null)
@@ -16,18 +14,29 @@
 </div>
 
 @code {
-    private Timer _timer;
     private string _data;
+    private PeriodicTimer _timer;
 
-    protected override void OnInitialized()
+    protected override async Task OnInitializedAsync()
     {
-        _timer = new Timer(async _ => await FetchData(), null, 0, 5000);
+        _timer = new PeriodicTimer(TimeSpan.FromSeconds(5));
+        await FetchDataPeriodically();
     }
 
-    private async Task FetchData()
+    private async Task FetchDataPeriodically()
     {
-        _data = await Http.GetStringAsync("https://atillaK:AtiSkyHigh@18@opensky-network.org/api/states/all?lamin=32.714545&lomin=-117.131584&lamax=33.909604&lomax=-116.888135");
-        InvokeAsync(StateHasChanged);
+        while (await _timer.WaitForNextTickAsync())
+        {
+            try
+            {
+                _data = await Http.GetStringAsync("api/your-endpoint");
+                InvokeAsync(StateHasChanged);
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error fetching data: {ex.Message}");
+            }
+        }
     }
 
     public void Dispose()
