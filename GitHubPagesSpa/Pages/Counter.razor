@@ -1,6 +1,9 @@
 @page "/counter"
 @inject HttpClient Http
 
+using System.Threading;
+using System.Threading.Tasks;
+
 <h3>API Data</h3>
 <div>
     @if (_data == null)
